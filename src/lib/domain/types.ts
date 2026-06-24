@@ -2,6 +2,15 @@ export const BANKS = ['CTBC', 'E.SUN', 'Taishin', 'Fubon', 'DBS'] as const;
 export type Bank = (typeof BANKS)[number];
 export type PaymentMethod = 'cash' | Bank;
 
+export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+	cash: '現金',
+	CTBC: '中信',
+	'E.SUN': '玉山',
+	Taishin: '台新',
+	Fubon: '富邦',
+	DBS: '星展'
+};
+
 export interface Fund {
 	id?: number;
 	date: string;
@@ -26,4 +35,5 @@ export interface Summary {
 	cardTotals: Partial<Record<Bank, number>>;
 	remainingDays: number;
 	dailyAllowance: number;
+	spentToday: number;
 }

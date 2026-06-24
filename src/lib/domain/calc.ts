@@ -31,6 +31,10 @@ export function dailyAllowance(balance: number, days: number): number {
 	return balance / days;
 }
 
+export function spentToday(txns: Transaction[], today: string): number {
+	return txns.reduce((s, t) => (t.date === today ? s + t.amount : s), 0);
+}
+
 export function buildSummary(
 	funds: Fund[],
 	txns: Transaction[],
@@ -44,6 +48,7 @@ export function buildSummary(
 		balance,
 		cardTotals,
 		remainingDays: days,
-		dailyAllowance: dailyAllowance(balance, days)
+		dailyAllowance: dailyAllowance(balance, days),
+		spentToday: spentToday(txns, today)
 	};
 }

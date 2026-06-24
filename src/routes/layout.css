@@ -1,6 +1,157 @@
 @import 'tailwindcss';
+@import '@fontsource-variable/sora';
+@import '@fontsource-variable/noto-sans-tc';
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton/themes/cerberus';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @source '../../node_modules/@skeletonlabs/skeleton-svelte/dist';
+
+@theme {
+	--color-mist: #F3F4FB;
+	--color-card: #FFFFFF;
+	--color-ink: #1E2030;
+	--color-ink-soft: #6B6F86;
+	--color-primary: #4F46E5;
+	--color-primary-end: #7C3AED;
+	--color-positive: #13A678;
+	--color-danger: #E5614C;
+	--color-shadow-primary: rgb(79 70 229 / .15);
+	--font-display: 'Sora Variable', 'Sora', ui-sans-serif, system-ui, sans-serif;
+	--font-body: 'Noto Sans TC Variable', 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
+	--radius-card: 1rem;
+	--radius-pill: 9999px;
+}
+
+/* ── base ── */
+body {
+	font-family: var(--font-body);
+	color: var(--color-ink);
+	background: linear-gradient(160deg, var(--color-mist) 0%, #E8E9F5 100%);
+	min-height: 100dvh;
+	font-feature-settings: 'tnum';
+}
+
+/* ── frosted header ── */
+.app-header {
+	position: sticky;
+	top: 0;
+	z-index: 40;
+	backdrop-filter: blur(16px) saturate(1.4);
+	-webkit-backdrop-filter: blur(16px) saturate(1.4);
+	background: rgb(243 244 251 / .78);
+	border-bottom: 1px solid rgb(79 70 229 / .08);
+}
+
+/* ── cards ── */
+.surface-card {
+	background: var(--color-card);
+	border-radius: var(--radius-card);
+	box-shadow: 0 4px 20px -8px var(--color-shadow-primary);
+	padding: 1.25rem;
+}
+
+.hero-card {
+	background: linear-gradient(135deg, var(--color-primary), var(--color-primary-end));
+	border-radius: 1.25rem;
+	color: white;
+	padding: 1.75rem 1.5rem;
+	box-shadow: 0 8px 28px -8px rgb(79 70 229 / .35);
+}
+
+/* ── money display ── */
+.money {
+	font-family: var(--font-display);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.02em;
+}
+
+/* ── runway bar ── */
+.runway-track {
+	height: 8px;
+	border-radius: var(--radius-pill);
+	background: rgb(255 255 255 / .25);
+	overflow: hidden;
+}
+.runway-fill {
+	height: 100%;
+	border-radius: var(--radius-pill);
+	background: white;
+	transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+.runway-fill[data-over="true"] {
+	background: var(--color-danger);
+}
+
+/* ── form fields ── */
+.field {
+	width: 100%;
+	padding: 0.625rem 0.875rem;
+	border-radius: 0.75rem;
+	border: 1.5px solid rgb(107 111 134 / .18);
+	background: var(--color-card);
+	color: var(--color-ink);
+	font-size: 0.9rem;
+	transition: border-color 0.2s, box-shadow 0.2s;
+	outline: none;
+}
+.field:focus {
+	border-color: var(--color-primary);
+	box-shadow: 0 0 0 3px rgb(79 70 229 / .1);
+}
+
+/* ── stat chip ── */
+.stat-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.375rem;
+	padding: 0.25rem 0.75rem;
+	border-radius: var(--radius-pill);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+/* ── bottom tab bar (mobile) ── */
+.bottom-bar {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 40;
+	background: rgb(243 244 251 / .85);
+	backdrop-filter: blur(16px) saturate(1.4);
+	-webkit-backdrop-filter: blur(16px) saturate(1.4);
+	border-top: 1px solid rgb(79 70 229 / .08);
+	padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+	display: flex;
+	justify-content: space-around;
+}
+.bottom-bar a {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.125rem;
+	font-size: 0.7rem;
+	font-weight: 500;
+	color: var(--color-ink-soft);
+	text-decoration: none;
+	padding: 0.25rem 0.75rem;
+	border-radius: 0.5rem;
+	transition: color 0.2s;
+}
+.bottom-bar a[aria-current="page"] {
+	color: var(--color-primary);
+	font-weight: 700;
+}
+
+/* ── quality floor ── */
+:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after {
+		animation-duration: 0.01ms !important;
+		transition-duration: 0.01ms !important;
+	}
+}

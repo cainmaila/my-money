@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { walletBalance, monthlyCardTotals, remainingDays, dailyAllowance, buildSummary } from './calc';
+import { walletBalance, monthlyCardTotals, remainingDays, dailyAllowance, spentToday, buildSummary } from './calc';
 import type { Fund, Transaction } from './types';
 
 describe('walletBalance', () => {
@@ -54,6 +54,21 @@ describe('dailyAllowance', () => {
 	it('returns 0 when days <= 0', () => {
 		expect(dailyAllowance(10000, 0)).toBe(0);
 		expect(dailyAllowance(10000, -1)).toBe(0);
+	});
+});
+
+describe('spentToday', () => {
+	it('sums only today transactions', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-24', detail: 'a', amount: 100, method: 'cash' },
+			{ date: '2026-06-24', detail: 'b', amount: 250, method: 'CTBC' },
+			{ date: '2026-06-23', detail: 'c', amount: 999, method: 'cash' },
+		];
+		expect(spentToday(txns, '2026-06-24')).toBe(350);
+	});
+
+	it('returns 0 with no today transactions', () => {
+		expect(spentToday([], '2026-06-24')).toBe(0);
 	});
 });
 
