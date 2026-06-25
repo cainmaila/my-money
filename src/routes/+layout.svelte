@@ -1,9 +1,11 @@
 <script lang="ts">
 	import './layout.css'
+	import { onMount } from 'svelte'
 	import favicon from '$lib/assets/favicon.svg'
 	import { AppBar, SegmentedControl } from '@skeletonlabs/skeleton-svelte'
+	import { browser } from '$app/environment'
 	import { base } from '$app/paths'
-	import { page } from '$app/state'
+	import { page, updated } from '$app/state'
 	import { goto } from '$app/navigation'
 
 	let { children } = $props()
@@ -22,9 +24,38 @@
 	function onNavChange(detail: { value: string | null }) {
 		if (detail.value) goto(withBase(detail.value))
 	}
+
+	onMount(() => {
+		if (!browser || !('serviceWorker' in navigator)) return
+
+		let refreshing = false
+
+		const onControllerChange = () => {
+			if (refreshing) return
+			refreshing = true
+			window.location.reload()
+		}
+
+		navigator.serviceWorker.addEventListener('controllerchange', onControllerChange)
+
+		return () => {
+			navigator.serviceWorker.removeEventListener('controllerchange', onControllerChange)
+		}
+	})
+
+	$effect(() => {
+		if (!browser || !('serviceWorker' in navigator) || !updated.current) return
+		navigator.serviceWorker.getRegistration().then((registration) => registration?.update())
+	})
 </script>
 
-<svelte:head><link rel="icon" href={favicon} /></svelte:head>
+<svelte:head>
+	<link rel="icon" href={favicon} />
+	<link rel="manifest" href={withBase('/manifest.webmanifest')} />
+	<link rel="apple-touch-icon" href={withBase('/icons/apple-touch-icon.png')} />
+	<meta name="application-name" content="我的錢包" />
+	<meta name="apple-mobile-web-app-title" content="我的錢包" />
+</svelte:head>
 
 <div class="flex min-h-dvh flex-col pb-16 sm:pb-0">
 	<!-- Desktop header -->

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+	<defs>
+		<linearGradient id="bg" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#115e59" />
+			<stop offset="1" stop-color="#0f766e" />
+		</linearGradient>
+		<linearGradient id="wallet" x1="122" y1="150" x2="393" y2="374" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#f5d489" />
+			<stop offset="1" stop-color="#d4a938" />
+		</linearGradient>
+	</defs>
+	<rect width="512" height="512" rx="112" fill="url(#bg)" />
+	<circle cx="392" cy="122" r="48" fill="#facc15" fill-opacity="0.28" />
+	<circle cx="125" cy="402" r="58" fill="#99f6e4" fill-opacity="0.2" />
+	<path d="M112 186c0-28.719 23.281-52 52-52h153.336c13.793 0 27.021 5.477 36.775 15.23l43.658 43.659A52 52 0 0 1 413 229.664V326c0 28.719-23.281 52-52 52H164c-28.719 0-52-23.281-52-52V186Z" fill="url(#wallet)" />
+	<path d="M302 134v69c0 17.673 14.327 32 32 32h79" stroke="#fef3c7" stroke-width="24" stroke-linecap="round" stroke-linejoin="round" />
+	<rect x="162" y="238" width="212" height="96" rx="28" fill="#0f766e" />
+	<circle cx="326" cy="286" r="20" fill="#fef3c7" />
+	<path d="M176 212h112" stroke="#fef3c7" stroke-width="18" stroke-linecap="round" />
+</svg>

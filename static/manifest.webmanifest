@@ -1,0 +1,38 @@
+{
+	"name": "我的錢包",
+	"short_name": "錢包",
+	"description": "可離線使用的個人記帳與現金流追蹤工具。",
+	"lang": "zh-Hant",
+	"start_url": "./",
+	"scope": "./",
+	"display": "standalone",
+	"orientation": "portrait-primary",
+	"background_color": "#f7f3ea",
+	"theme_color": "#0f766e",
+	"icons": [
+		{
+			"src": "./icons/app-icon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		},
+		{
+			"src": "./icons/app-icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "./icons/app-icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any"
+		},
+		{
+			"src": "./icons/maskable-icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		}
+	]
+}
