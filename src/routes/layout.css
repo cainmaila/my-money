@@ -3,8 +3,6 @@
 @import '@fontsource-variable/noto-sans-tc';
 @import '@skeletonlabs/skeleton';
 @import '@skeletonlabs/skeleton/themes/cerberus';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/typography';
 @source '../../node_modules/@skeletonlabs/skeleton-svelte/dist';
 
 @theme {

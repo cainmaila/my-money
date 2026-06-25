@@ -7,7 +7,6 @@
 	let fundAmount = $state('')
 	let targetInput = $state('')
 	let showClearConfirm = $state(false)
-	let isClearing = $state(false)
 
 	async function handleAddFund(event: SubmitEvent) {
 		event.preventDefault()
@@ -23,21 +22,11 @@
 		await setTargetDate(targetInput)
 	}
 
-	function cancelClearWallet() {
-		showClearConfirm = false
-	}
-
 	async function handleClearWallet() {
-		if (isClearing) return
-		isClearing = true
-		try {
-			await clearWallet()
-			fundAmount = ''
-			targetInput = ''
-			showClearConfirm = false
-		} finally {
-			isClearing = false
-		}
+		await clearWallet()
+		fundAmount = ''
+		targetInput = ''
+		showClearConfirm = false
 	}
 </script>
 
@@ -91,8 +80,7 @@
 					<button
 						type="button"
 						class="btn preset-outlined-surface-200-800"
-						onclick={cancelClearWallet}
-						disabled={isClearing}
+						onclick={() => (showClearConfirm = false)}
 					>
 						取消
 					</button>
@@ -100,9 +88,8 @@
 						type="button"
 						class="btn btn-danger"
 						onclick={handleClearWallet}
-						disabled={isClearing}
 					>
-						{isClearing ? '清空中...' : '確認清空'}
+						確認清空
 					</button>
 				</div>
 			</div>
