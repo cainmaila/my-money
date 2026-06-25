@@ -1,20 +1,21 @@
 <script lang="ts">
-	import { addTransaction } from '$lib/db/repo';
-	import { BANKS, PAYMENT_LABELS, type PaymentMethod } from '$lib/domain/types';
-	import { goto } from '$app/navigation';
+	import { addTransaction } from '$lib/db/repo'
+	import { base } from '$app/paths'
+	import { BANKS, PAYMENT_LABELS, type PaymentMethod } from '$lib/domain/types'
+	import { goto } from '$app/navigation'
 
-	let date = $state(new Date().toISOString().slice(0, 10));
-	let detail = $state('');
-	let amount = $state('');
-	let method = $state<PaymentMethod>('cash');
+	let date = $state(new Date().toISOString().slice(0, 10))
+	let detail = $state('')
+	let amount = $state('')
+	let method = $state<PaymentMethod>('cash')
 
-	const methods: PaymentMethod[] = ['cash', ...BANKS];
+	const methods: PaymentMethod[] = ['cash', ...BANKS]
 
 	async function handleSubmit() {
-		const n = Number(amount);
-		if (!n || n <= 0 || !detail.trim()) return;
-		await addTransaction({ date, detail: detail.trim(), amount: n, method });
-		goto('/');
+		const n = Number(amount)
+		if (!n || n <= 0 || !detail.trim()) return
+		await addTransaction({ date, detail: detail.trim(), amount: n, method })
+		goto(`${base}/`)
 	}
 </script>
 
@@ -39,9 +40,11 @@
 			{#each methods as m}
 				<button
 					type="button"
-					class="chip {method === m ? 'preset-filled-primary-500' : 'preset-outlined-surface-200-800'}"
-					onclick={() => (method = m)}
-				>{PAYMENT_LABELS[m]}</button>
+					class="chip {method === m
+						? 'preset-filled-primary-500'
+						: 'preset-outlined-surface-200-800'}"
+					onclick={() => (method = m)}>{PAYMENT_LABELS[m]}</button
+				>
 			{/each}
 		</div>
 	</fieldset>
