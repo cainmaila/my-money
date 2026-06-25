@@ -1,10 +1,5 @@
 import { PAYMENT_LABELS, type Bank, type Fund, type Summary, type Transaction } from './types'
 
-interface TransactionDayGroup {
-	date: string
-	transactions: Transaction[]
-}
-
 export function walletBalance(funds: Fund[], txns: Transaction[]): number {
 	const totalFunds = funds.reduce((s, f) => s + f.amount, 0)
 	const totalSpent = txns.reduce((s, t) => s + t.amount, 0)
@@ -40,8 +35,10 @@ export function spentToday(txns: Transaction[], today: string): number {
 	return txns.reduce((s, t) => (t.date === today ? s + t.amount : s), 0)
 }
 
-export function groupTransactionsByDay(txns: Transaction[]): TransactionDayGroup[] {
-	const groups: TransactionDayGroup[] = []
+export function groupTransactionsByDay(
+	txns: Transaction[]
+): { date: string; transactions: Transaction[] }[] {
+	const groups: { date: string; transactions: Transaction[] }[] = []
 
 	for (const txn of txns) {
 		const lastGroup = groups.at(-1)

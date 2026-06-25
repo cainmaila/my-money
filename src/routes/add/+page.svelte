@@ -11,7 +11,8 @@
 
 	const methods: PaymentMethod[] = ['cash', ...BANKS]
 
-	async function handleSubmit() {
+	async function handleSubmit(event: SubmitEvent) {
+		event.preventDefault()
 		const n = Number(amount)
 		if (!n || n <= 0 || !detail.trim()) return
 		await addTransaction({ date, detail: detail.trim(), amount: n, method })
