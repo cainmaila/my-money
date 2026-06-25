@@ -5,6 +5,7 @@ import {
 	remainingDays,
 	dailyAllowance,
 	spentToday,
+	topTransactionDetails,
 	groupTransactionsByDay,
 	formatHistoryDayLabel,
 	formatHistoryTransactionLine,
@@ -88,22 +89,81 @@ describe('spentToday', () => {
 	})
 })
 
+describe('topTransactionDetails', () => {
+	it('aggregates count and total amount by detail', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-01', detail: '午餐', amount: 100, method: 'cash' },
+			{ date: '2026-06-02', detail: '午餐', amount: 150, method: 'CTBC' },
+			{ date: '2026-06-03', detail: '晚餐', amount: 220, method: 'cash' }
+		]
+
+		expect(topTransactionDetails(txns)).toEqual([
+			{ detail: '午餐', count: 2, totalAmount: 250 },
+			{ detail: '晚餐', count: 1, totalAmount: 220 }
+		])
+	})
+
+	it('returns only the top five details by total amount', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-01', detail: 'A', amount: 10, method: 'cash' },
+			{ date: '2026-06-01', detail: 'B', amount: 20, method: 'cash' },
+			{ date: '2026-06-01', detail: 'C', amount: 30, method: 'cash' },
+			{ date: '2026-06-01', detail: 'D', amount: 40, method: 'cash' },
+			{ date: '2026-06-01', detail: 'E', amount: 50, method: 'cash' },
+			{ date: '2026-06-01', detail: 'F', amount: 60, method: 'cash' }
+		]
+
+		expect(topTransactionDetails(txns)).toEqual([
+			{ detail: 'F', count: 1, totalAmount: 60 },
+			{ detail: 'E', count: 1, totalAmount: 50 },
+			{ detail: 'D', count: 1, totalAmount: 40 },
+			{ detail: 'C', count: 1, totalAmount: 30 },
+			{ detail: 'B', count: 1, totalAmount: 20 }
+		])
+	})
+
+	it('uses count and detail name as deterministic tie breakers', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-01', detail: '晚餐', amount: 100, method: 'cash' },
+			{ date: '2026-06-02', detail: '早餐', amount: 60, method: 'cash' },
+			{ date: '2026-06-03', detail: '早餐', amount: 40, method: 'cash' },
+			{ date: '2026-06-04', detail: '午餐', amount: 100, method: 'cash' }
+		]
+
+		expect(topTransactionDetails(txns)).toEqual([
+			{ detail: '早餐', count: 2, totalAmount: 100 },
+			{ detail: '午餐', count: 1, totalAmount: 100 },
+			{ detail: '晚餐', count: 1, totalAmount: 100 }
+		])
+	})
+
+	it('returns empty for no transactions', () => {
+		expect(topTransactionDetails([])).toEqual([])
+	})
+})
+
 describe('buildSummary', () => {
 	it('computes full summary', () => {
 		const funds: Fund[] = [{ date: '2026-06-01', amount: 30000 }]
 		const txns: Transaction[] = [
 			{ date: '2026-06-10', detail: 'dinner', amount: 500, method: 'CTBC' },
+			{ date: '2026-06-12', detail: 'dinner', amount: 300, method: 'cash' },
 			{ date: '2026-06-15', detail: 'groceries', amount: 1000, method: 'cash' }
 		]
 		const s = buildSummary(funds, txns, '2026-06-30', '2026-06-24')
-		expect(s.balance).toBe(28500)
+		expect(s.balance).toBe(28200)
 		expect(s.cardTotals).toEqual({ CTBC: 500 })
+		expect(s.topDetails).toEqual([
+			{ detail: 'groceries', count: 1, totalAmount: 1000 },
+			{ detail: 'dinner', count: 2, totalAmount: 800 }
+		])
 		expect(s.remainingDays).toBe(7)
-		expect(s.dailyAllowance).toBeCloseTo(28500 / 7)
+		expect(s.dailyAllowance).toBeCloseTo(28200 / 7)
 	})
 
 	it('handles no target date', () => {
 		const s = buildSummary([], [], null, '2026-06-24')
+		expect(s.topDetails).toEqual([])
 		expect(s.remainingDays).toBe(0)
 		expect(s.dailyAllowance).toBe(0)
 	})

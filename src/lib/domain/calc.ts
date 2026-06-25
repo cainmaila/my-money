@@ -1,4 +1,11 @@
-import { PAYMENT_LABELS, type Bank, type Fund, type Summary, type Transaction } from './types'
+import {
+	PAYMENT_LABELS,
+	type Bank,
+	type DetailSummary,
+	type Fund,
+	type Summary,
+	type Transaction
+} from './types'
 
 export function walletBalance(funds: Fund[], txns: Transaction[]): number {
 	const totalFunds = funds.reduce((s, f) => s + f.amount, 0)
@@ -33,6 +40,28 @@ export function dailyAllowance(balance: number, days: number): number {
 
 export function spentToday(txns: Transaction[], today: string): number {
 	return txns.reduce((s, t) => (t.date === today ? s + t.amount : s), 0)
+}
+
+export function topTransactionDetails(txns: Transaction[], limit = 5): DetailSummary[] {
+	return Object.values(
+		txns.reduce<Record<string, DetailSummary>>((groups, { detail, amount }) => {
+			const entry = groups[detail]
+			if (entry) {
+				entry.count += 1
+				entry.totalAmount += amount
+			} else {
+				groups[detail] = { detail, count: 1, totalAmount: amount }
+			}
+			return groups
+		}, {})
+	)
+		.sort(
+			(left, right) =>
+				right.totalAmount - left.totalAmount ||
+				right.count - left.count ||
+				left.detail.localeCompare(right.detail)
+		)
+		.slice(0, limit)
 }
 
 export function groupTransactionsByDay(
@@ -82,6 +111,7 @@ export function buildSummary(
 	return {
 		balance,
 		cardTotals,
+		topDetails: topTransactionDetails(txns),
 		remainingDays: days,
 		dailyAllowance: dailyAllowance(balance, days),
 		spentToday: spentToday(txns, today)
