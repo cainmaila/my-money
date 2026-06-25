@@ -6,7 +6,13 @@
 		groupTransactionsByDay,
 		serializeHistoryDayText
 	} from '$lib/domain/calc'
-	import { BANKS, PAYMENT_LABELS, type PaymentMethod, type Transaction } from '$lib/domain/types'
+	import { BANKS, PAYMENT_LABELS, PAYMENT_ICON, type PaymentMethod, type Transaction } from '$lib/domain/types'
+	import Copy from '@lucide/svelte/icons/copy'
+	import Check from '@lucide/svelte/icons/check'
+	import X from '@lucide/svelte/icons/x'
+	import Banknote from '@lucide/svelte/icons/banknote'
+	import CreditCard from '@lucide/svelte/icons/credit-card'
+	import ReceiptText from '@lucide/svelte/icons/receipt-text'
 
 	const money = getState()
 	let editingId: number | null = $state(null)
@@ -61,7 +67,8 @@
 <h2 class="mb-4 text-xl font-bold">紀錄</h2>
 
 {#if money.transactions.length === 0}
-	<div class="card surface-card text-center">
+	<div class="card surface-card flex flex-col items-center gap-3 py-8 text-center">
+		<ReceiptText size={48} style="color:var(--color-ink-soft);opacity:0.4" />
 		<p style="color:var(--color-ink-soft)">還沒有紀錄，去記第一筆吧</p>
 	</div>
 {:else}
@@ -77,10 +84,14 @@
 					</div>
 					<button
 						type="button"
-						class="btn preset-outlined-surface-200-800"
+						class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"
 						onclick={() => copyDayText(group.date, group.transactions)}
 					>
-						{copiedDate === group.date ? '已複製' : '複製文字'}
+						{#if copiedDate === group.date}
+							<Check size={16} />已複製
+						{:else}
+							<Copy size={16} />複製文字
+						{/if}
 					</button>
 				</div>
 
@@ -96,18 +107,18 @@
 										{#each methods as m}
 											<button
 												type="button"
-												class="chip {editMethod === m
+												class="chip inline-flex items-center gap-1 {editMethod === m
 													? 'preset-filled-primary-500'
 													: 'preset-outlined-surface-200-800'}"
-												onclick={() => (editMethod = m)}>{PAYMENT_LABELS[m]}</button
-											>
+												onclick={() => (editMethod = m)}>
+												{#if PAYMENT_ICON[m] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
+												{PAYMENT_LABELS[m]}
+											</button>
 										{/each}
 									</div>
 									<div class="flex gap-2">
-										<button onclick={saveEdit} class="btn preset-filled-primary-500">儲存</button>
-										<button onclick={cancelEdit} class="btn preset-outlined-surface-200-800"
-											>取消</button
-										>
+										<button onclick={saveEdit} class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
+										<button onclick={cancelEdit} class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"><X size={16} />取消</button>
 									</div>
 								</div>
 							{:else}
@@ -117,7 +128,8 @@
 								>
 									<div>
 										<p class="text-sm font-semibold">{txn.detail}</p>
-										<p class="text-xs" style="color:var(--color-ink-soft)">
+										<p class="inline-flex items-center gap-1 text-xs" style="color:var(--color-ink-soft)">
+											{#if PAYMENT_ICON[txn.method] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
 											{PAYMENT_LABELS[txn.method]}
 										</p>
 									</div>

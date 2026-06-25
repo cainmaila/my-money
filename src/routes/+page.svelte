@@ -2,6 +2,9 @@
 	import { getState } from '$lib/stores/money.svelte';
 	import { BANKS, PAYMENT_LABELS } from '$lib/domain/types';
 	import { Progress } from '@skeletonlabs/skeleton-svelte';
+	import Coins from '@lucide/svelte/icons/coins';
+	import Wallet from '@lucide/svelte/icons/wallet';
+	import CreditCard from '@lucide/svelte/icons/credit-card';
 
 	const money = getState();
 
@@ -18,7 +21,7 @@
 	<!-- Hero: 今日可花 -->
 	{#if money.summary.remainingDays > 0}
 		<div class="hero-card">
-			<p class="text-sm font-medium" style="color:rgb(255 255 255/.7)">今日可花</p>
+			<p class="inline-flex items-center gap-1.5 text-sm font-medium" style="color:rgb(255 255 255/.7)"><Coins size={16} />今日可花</p>
 			<p class="money mt-1 text-4xl font-extrabold">${Math.floor(money.summary.dailyAllowance).toLocaleString()}</p>
 
 			<div class="mt-3">
@@ -52,19 +55,19 @@
 
 	<!-- 餘額 -->
 	<div class="card surface-card">
-		<p class="text-xs font-medium" style="color:var(--color-ink-soft)">錢包餘額</p>
+		<p class="inline-flex items-center gap-1.5 text-xs font-medium" style="color:var(--color-ink-soft)"><Wallet size={16} />錢包餘額</p>
 		<p class="money mt-1 text-2xl font-bold" style="color:var(--color-positive)">${money.summary.balance.toLocaleString()}</p>
 	</div>
 
 	<!-- 本月卡費 -->
 	{#if Object.keys(money.summary.cardTotals).length > 0}
 		<div class="card surface-card">
-			<p class="mb-3 text-xs font-medium" style="color:var(--color-ink-soft)">本月信用卡應付</p>
+			<p class="mb-3 inline-flex items-center gap-1.5 text-xs font-medium" style="color:var(--color-ink-soft)"><CreditCard size={16} />本月信用卡應付</p>
 			<div class="flex flex-col gap-2">
 				{#each BANKS as bank}
 					{#if money.summary.cardTotals[bank]}
 						<div class="flex items-center justify-between border-b py-1.5" style="border-color:rgb(107 111 134/.08)">
-							<span class="text-sm">{PAYMENT_LABELS[bank]}</span>
+							<span class="inline-flex items-center gap-1 text-sm"><CreditCard size={14} />{PAYMENT_LABELS[bank]}</span>
 							<span class="money text-sm font-semibold">${money.summary.cardTotals[bank]!.toLocaleString()}</span>
 						</div>
 					{/if}

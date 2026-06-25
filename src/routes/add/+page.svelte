@@ -1,8 +1,11 @@
 <script lang="ts">
 	import { addTransaction } from '$lib/db/repo'
 	import { base } from '$app/paths'
-	import { BANKS, PAYMENT_LABELS, type PaymentMethod } from '$lib/domain/types'
+	import { BANKS, PAYMENT_LABELS, PAYMENT_ICON, type PaymentMethod } from '$lib/domain/types'
 	import { goto } from '$app/navigation'
+	import Check from '@lucide/svelte/icons/check'
+	import Banknote from '@lucide/svelte/icons/banknote'
+	import CreditCard from '@lucide/svelte/icons/credit-card'
 
 	let date = $state(new Date().toISOString().slice(0, 10))
 	let detail = $state('')
@@ -41,13 +44,15 @@
 			{#each methods as m}
 				<button
 					type="button"
-					class="chip {method === m
+					class="chip inline-flex items-center gap-1 {method === m
 						? 'preset-filled-primary-500'
 						: 'preset-outlined-surface-200-800'}"
-					onclick={() => (method = m)}>{PAYMENT_LABELS[m]}</button
-				>
+					onclick={() => (method = m)}>
+					{#if PAYMENT_ICON[m] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
+					{PAYMENT_LABELS[m]}
+				</button>
 			{/each}
 		</div>
 	</fieldset>
-	<button type="submit" class="btn preset-filled-primary-500 self-start">儲存</button>
+	<button type="submit" class="btn preset-filled-primary-500 self-start inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
 </form>

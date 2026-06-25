@@ -1,6 +1,10 @@
 <script lang="ts">
 	import { getState } from '$lib/stores/money.svelte'
 	import { addFund, clearWallet, setTargetDate } from '$lib/db/repo'
+	import Plus from '@lucide/svelte/icons/plus'
+	import CalendarCheck from '@lucide/svelte/icons/calendar-check'
+	import Trash2 from '@lucide/svelte/icons/trash-2'
+	import X from '@lucide/svelte/icons/x'
 
 	const money = getState()
 
@@ -42,7 +46,7 @@
 		</p>
 		<form onsubmit={handleAddFund} class="flex gap-2">
 			<input type="number" bind:value={fundAmount} placeholder="金額" min="1" class="field w-40" />
-			<button type="submit" class="btn preset-filled-primary-500">加入</button>
+			<button type="submit" class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><Plus size={16} />加入</button>
 		</form>
 	</div>
 
@@ -60,7 +64,7 @@
 		{/if}
 		<form onsubmit={handleSetTarget} class="flex gap-2">
 			<input type="date" bind:value={targetInput} class="field w-48" />
-			<button type="submit" class="btn preset-filled-primary-500">設定</button>
+			<button type="submit" class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><CalendarCheck size={16} />設定</button>
 		</form>
 	</div>
 
@@ -79,23 +83,23 @@
 				<div class="flex flex-wrap gap-2">
 					<button
 						type="button"
-						class="btn preset-outlined-surface-200-800"
+						class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"
 						onclick={() => (showClearConfirm = false)}
 					>
-						取消
+						<X size={16} />取消
 					</button>
 					<button
 						type="button"
-						class="btn btn-danger"
+						class="btn btn-danger inline-flex items-center gap-1.5"
 						onclick={handleClearWallet}
 					>
-						確認清空
+						<Trash2 size={16} />確認清空
 					</button>
 				</div>
 			</div>
 		{:else}
-			<button type="button" class="btn btn-danger-soft" onclick={() => (showClearConfirm = true)}>
-				清空錢包
+			<button type="button" class="btn btn-danger-soft inline-flex items-center gap-1.5" onclick={() => (showClearConfirm = true)}>
+				<Trash2 size={16} />清空錢包
 			</button>
 		{/if}
 	</div>

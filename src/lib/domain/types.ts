@@ -11,6 +11,15 @@ export const PAYMENT_LABELS: Record<PaymentMethod, string> = {
 	DBS: '星展'
 };
 
+export const PAYMENT_ICON: Record<PaymentMethod, 'cash' | 'card'> = {
+	cash: 'cash',
+	CTBC: 'card',
+	'E.SUN': 'card',
+	Taishin: 'card',
+	Fubon: 'card',
+	DBS: 'card'
+};
+
 export interface Fund {
 	id?: number;
 	date: string;

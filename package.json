@@ -46,6 +46,7 @@
 	"dependencies": {
 		"@fontsource-variable/noto-sans-tc": "^5.2.10",
 		"@fontsource-variable/sora": "^5.2.8",
+		"@lucide/svelte": "^1.21.0",
 		"@skeletonlabs/skeleton": "^4.15.2",
 		"@skeletonlabs/skeleton-svelte": "^4.15.2",
 		"dexie": "^4.4.4"

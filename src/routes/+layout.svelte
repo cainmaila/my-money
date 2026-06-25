@@ -1,20 +1,24 @@
 <script lang="ts">
 	import './layout.css'
-	import { onMount } from 'svelte'
+	import { onMount, type Component } from 'svelte'
 	import favicon from '$lib/assets/favicon.svg'
 	import { AppBar, SegmentedControl } from '@skeletonlabs/skeleton-svelte'
 	import { browser } from '$app/environment'
 	import { base } from '$app/paths'
 	import { page, updated } from '$app/state'
 	import { goto } from '$app/navigation'
+	import Wallet from '@lucide/svelte/icons/wallet'
+	import CirclePlus from '@lucide/svelte/icons/circle-plus'
+	import ReceiptText from '@lucide/svelte/icons/receipt-text'
+	import Settings from '@lucide/svelte/icons/settings'
 
 	let { children } = $props()
 
-	const nav = [
-		{ value: '/', label: '總覽' },
-		{ value: '/add', label: '記帳' },
-		{ value: '/history', label: '紀錄' },
-		{ value: '/setup', label: '設定' }
+	const nav: { value: string; label: string; icon: Component }[] = [
+		{ value: '/', label: '總覽', icon: Wallet },
+		{ value: '/add', label: '記帳', icon: CirclePlus },
+		{ value: '/history', label: '紀錄', icon: ReceiptText },
+		{ value: '/setup', label: '設定', icon: Settings }
 	]
 
 	function withBase(pathname: string) {
@@ -62,16 +66,22 @@
 	<AppBar class="app-header hidden sm:block">
 		<AppBar.Toolbar>
 			<AppBar.Lead>
-				<span class="money text-lg font-bold tracking-tight" style="color:var(--color-primary)"
-					>我的錢包</span
-				>
+				<span class="inline-flex items-center gap-1.5 text-lg font-bold tracking-tight" style="color:var(--color-primary)">
+					<Wallet size={20} />
+					<span class="money">我的錢包</span>
+				</span>
 			</AppBar.Lead>
 			<AppBar.Trail>
 				<SegmentedControl value={page.route.id ?? '/'} onValueChange={onNavChange}>
 					<SegmentedControl.Control>
 						{#each nav as n}
 							<SegmentedControl.Item value={n.value}>
-								<SegmentedControl.ItemText>{n.label}</SegmentedControl.ItemText>
+								<SegmentedControl.ItemText>
+									<span class="inline-flex items-center gap-1.5">
+										<n.icon size={16} />
+										{n.label}
+									</span>
+								</SegmentedControl.ItemText>
 								<SegmentedControl.ItemHiddenInput />
 							</SegmentedControl.Item>
 						{/each}
@@ -90,9 +100,10 @@
 	<!-- Mobile bottom bar -->
 	<nav class="bottom-bar sm:hidden">
 		{#each nav as n}
-			<a href={withBase(n.value)} aria-current={page.route.id === n.value ? 'page' : undefined}
-				>{n.label}</a
-			>
+			<a href={withBase(n.value)} aria-current={page.route.id === n.value ? 'page' : undefined}>
+				<n.icon size={22} />
+				{n.label}
+			</a>
 		{/each}
 	</nav>
 </div>
