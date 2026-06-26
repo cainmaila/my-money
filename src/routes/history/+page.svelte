@@ -21,6 +21,7 @@
 	let editDetail = $state('')
 	let editAmount = $state('')
 	let editMethod: PaymentMethod = $state('cash')
+	let confirmDelete = $state(false)
 	let copiedDate = $state<string | null>(null)
 	let copiedResetTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -34,10 +35,12 @@
 		editDetail = txn.detail
 		editAmount = String(txn.amount)
 		editMethod = txn.method
+		confirmDelete = false
 	}
 
 	function cancelEdit() {
 		editingId = null
+		confirmDelete = false
 	}
 
 	async function saveEdit() {
@@ -120,7 +123,11 @@
 									<div class="flex gap-2">
 										<button onclick={saveEdit} class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
 										<button onclick={cancelEdit} class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"><X size={16} />取消</button>
-										<button onclick={() => { deleteTransaction(editingId!); editingId = null }} class="btn preset-outlined-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />刪除</button>
+										{#if confirmDelete}
+											<button onclick={() => { deleteTransaction(editingId!); editingId = null; confirmDelete = false }} class="btn preset-filled-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />確定刪除</button>
+										{:else}
+											<button onclick={() => (confirmDelete = true)} class="btn preset-outlined-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />刪除</button>
+										{/if}
 									</div>
 								</div>
 							{:else}
