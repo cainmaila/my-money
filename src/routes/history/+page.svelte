@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getState } from '$lib/stores/money.svelte'
-	import { updateTransaction } from '$lib/db/repo'
+	import { updateTransaction, deleteTransaction } from '$lib/db/repo'
 	import {
 		formatHistoryDayLabel,
 		groupTransactionsByDay,
@@ -10,6 +10,7 @@
 	import Copy from '@lucide/svelte/icons/copy'
 	import Check from '@lucide/svelte/icons/check'
 	import X from '@lucide/svelte/icons/x'
+	import Trash2 from '@lucide/svelte/icons/trash-2'
 	import Banknote from '@lucide/svelte/icons/banknote'
 	import CreditCard from '@lucide/svelte/icons/credit-card'
 	import ReceiptText from '@lucide/svelte/icons/receipt-text'
@@ -119,6 +120,7 @@
 									<div class="flex gap-2">
 										<button onclick={saveEdit} class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
 										<button onclick={cancelEdit} class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"><X size={16} />取消</button>
+										<button onclick={() => { deleteTransaction(editingId!); editingId = null }} class="btn preset-outlined-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />刪除</button>
 									</div>
 								</div>
 							{:else}

@@ -20,6 +20,10 @@ export async function setTargetDate(date: string): Promise<void> {
 	await db.settings.put({ key: 'targetDate', value: date })
 }
 
+export async function deleteTransaction(id: number): Promise<void> {
+	await db.transactions.delete(id)
+}
+
 export async function clearWallet(): Promise<void> {
 	await db.transaction('rw', db.funds, db.transactions, db.settings, async () => {
 		await db.funds.clear()
