@@ -13,14 +13,10 @@ export function walletBalance(funds: Fund[], txns: Transaction[]): number {
 	return totalFunds - totalSpent
 }
 
-export function monthlyCardTotals(
-	txns: Transaction[],
-	refDate: string
-): Partial<Record<Bank, number>> {
-	const prefix = refDate.slice(0, 7) // YYYY-MM
+export function cardTotals(txns: Transaction[]): Partial<Record<Bank, number>> {
 	const result: Partial<Record<Bank, number>> = {}
 	for (const t of txns) {
-		if (t.method === 'cash' || !t.date.startsWith(prefix)) continue
+		if (t.method === 'cash') continue
 		result[t.method] = (result[t.method] ?? 0) + t.amount
 	}
 	return result
@@ -106,11 +102,10 @@ export function buildSummary(
 	today: string
 ): Summary {
 	const balance = walletBalance(funds, txns)
-	const cardTotals = monthlyCardTotals(txns, today)
 	const days = targetDate ? remainingDays(today, targetDate) : 0
 	return {
 		balance,
-		cardTotals,
+		cardTotals: cardTotals(txns),
 		topDetails: topTransactionDetails(txns),
 		remainingDays: days,
 		dailyAllowance: dailyAllowance(balance, days),

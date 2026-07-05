@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
 	walletBalance,
-	monthlyCardTotals,
+	cardTotals,
 	remainingDays,
 	dailyAllowance,
 	spentToday,
@@ -31,8 +31,8 @@ describe('walletBalance', () => {
 	})
 })
 
-describe('monthlyCardTotals', () => {
-	it('groups by bank for current month, ignores cash', () => {
+describe('cardTotals', () => {
+	it('groups by bank across all time, ignores cash', () => {
 		const txns: Transaction[] = [
 			{ date: '2026-06-01', detail: 'a', amount: 100, method: 'CTBC' },
 			{ date: '2026-06-15', detail: 'b', amount: 200, method: 'CTBC' },
@@ -40,12 +40,12 @@ describe('monthlyCardTotals', () => {
 			{ date: '2026-06-05', detail: 'd', amount: 300, method: 'cash' },
 			{ date: '2026-05-01', detail: 'e', amount: 999, method: 'CTBC' }
 		]
-		const result = monthlyCardTotals(txns, '2026-06-20')
-		expect(result).toEqual({ CTBC: 300, 'E.SUN': 50 })
+		const result = cardTotals(txns)
+		expect(result).toEqual({ CTBC: 1299, 'E.SUN': 50 })
 	})
 
 	it('returns empty for no card txns', () => {
-		expect(monthlyCardTotals([], '2026-06-01')).toEqual({})
+		expect(cardTotals([])).toEqual({})
 	})
 })
 

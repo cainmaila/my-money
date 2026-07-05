@@ -76,14 +76,14 @@
 		</p>
 	</div>
 
-	<!-- 本月卡費 -->
+	<!-- 本次卡費 -->
 	{#if Object.keys(money.summary.cardTotals).length > 0}
 		<div class="card surface-card">
 			<p
 				class="mb-3 inline-flex items-center gap-1.5 text-xs font-medium"
 				style="color:var(--color-ink-soft)"
 			>
-				<CreditCard size={16} />本月信用卡應付
+				<CreditCard size={16} />本次信用卡應付
 			</p>
 			<div class="flex flex-col gap-2">
 				{#each BANKS as bank}
