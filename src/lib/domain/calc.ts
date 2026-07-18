@@ -1,11 +1,18 @@
 import {
 	PAYMENT_LABELS,
 	type Bank,
+	type CumulativePoint,
 	type DetailSummary,
 	type Fund,
 	type Summary,
 	type Transaction
 } from './types'
+
+const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六']
+
+function toDateStr(d: Date): string {
+	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
 export function walletBalance(funds: Fund[], txns: Transaction[]): number {
 	const totalFunds = funds.reduce((s, f) => s + f.amount, 0)
@@ -58,6 +65,47 @@ export function topTransactionDetails(txns: Transaction[], limit = 5): DetailSum
 				left.detail.localeCompare(right.detail)
 		)
 		.slice(0, limit)
+}
+
+export function monthlyCumulativeSpend(txns: Transaction[], today: string): CumulativePoint[] {
+	const monthPrefix = today.slice(0, 7)
+	const todayDay = Number(today.slice(8, 10))
+	const dailyTotals = new Map<string, number>()
+	for (const t of txns) {
+		if (!t.date.startsWith(monthPrefix)) continue
+		dailyTotals.set(t.date, (dailyTotals.get(t.date) ?? 0) + t.amount)
+	}
+
+	const points: CumulativePoint[] = []
+	let cumulative = 0
+	for (let day = 1; day <= todayDay; day++) {
+		const dateStr = `${monthPrefix}-${String(day).padStart(2, '0')}`
+		cumulative += dailyTotals.get(dateStr) ?? 0
+		points.push({ label: String(day), cumulative })
+	}
+	return points
+}
+
+export function weeklyCumulativeSpend(txns: Transaction[], today: string): CumulativePoint[] {
+	const dailyTotals = new Map<string, number>()
+	for (const t of txns) {
+		dailyTotals.set(t.date, (dailyTotals.get(t.date) ?? 0) + t.amount)
+	}
+
+	const todayDate = new Date(today + 'T00:00:00')
+	const dow = todayDate.getDay()
+	const sunday = new Date(todayDate)
+	sunday.setDate(todayDate.getDate() - dow)
+
+	const points: CumulativePoint[] = []
+	let cumulative = 0
+	for (let i = 0; i <= dow; i++) {
+		const d = new Date(sunday)
+		d.setDate(sunday.getDate() + i)
+		cumulative += dailyTotals.get(toDateStr(d)) ?? 0
+		points.push({ label: WEEKDAY_LABELS[i], cumulative })
+	}
+	return points
 }
 
 export function groupTransactionsByDay(

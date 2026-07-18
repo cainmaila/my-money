@@ -66,7 +66,10 @@
 	<AppBar class="app-header hidden sm:block">
 		<AppBar.Toolbar>
 			<AppBar.Lead>
-				<span class="inline-flex items-center gap-1.5 text-lg font-bold tracking-tight" style="color:var(--color-primary)">
+				<span
+					class="inline-flex items-center gap-1.5 text-lg font-bold tracking-tight"
+					style="color:var(--color-primary)"
+				>
 					<Wallet size={20} />
 					<span class="money">我的錢包</span>
 				</span>

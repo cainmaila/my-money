@@ -47,12 +47,17 @@
 					class="chip inline-flex items-center gap-1 {method === m
 						? 'preset-filled-primary-500'
 						: 'preset-outlined-surface-200-800'}"
-					onclick={() => (method = m)}>
+					onclick={() => (method = m)}
+				>
 					{#if PAYMENT_ICON[m] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
 					{PAYMENT_LABELS[m]}
 				</button>
 			{/each}
 		</div>
 	</fieldset>
-	<button type="submit" class="btn preset-filled-primary-500 self-start inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
+	<button
+		type="submit"
+		class="btn preset-filled-primary-500 self-start inline-flex items-center gap-1.5"
+		><Check size={16} />儲存</button
+	>
 </form>

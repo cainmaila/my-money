@@ -40,6 +40,11 @@ export interface DetailSummary {
 	totalAmount: number
 }
 
+export interface CumulativePoint {
+	label: string
+	cumulative: number
+}
+
 export interface Settings {
 	key: string
 	value: string

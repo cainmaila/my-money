@@ -1,13 +1,23 @@
 <script lang="ts">
 	import { getState } from '$lib/stores/money.svelte'
 	import { BANKS, PAYMENT_LABELS } from '$lib/domain/types'
-	import { Progress } from '@skeletonlabs/skeleton-svelte'
+	import { monthlyCumulativeSpend, weeklyCumulativeSpend } from '$lib/domain/calc'
+	import { Progress, SegmentedControl } from '@skeletonlabs/skeleton-svelte'
 	import Coins from '@lucide/svelte/icons/coins'
 	import Wallet from '@lucide/svelte/icons/wallet'
 	import CreditCard from '@lucide/svelte/icons/credit-card'
 	import ReceiptText from '@lucide/svelte/icons/receipt-text'
+	import TrendingUp from '@lucide/svelte/icons/trending-up'
+	import CumulativeChart from '$lib/components/CumulativeChart.svelte'
 
 	const money = getState()
+
+	let chartTab = $state<'month' | 'week'>('month')
+	const chartPoints = $derived(
+		chartTab === 'month'
+			? monthlyCumulativeSpend(money.transactions, money.today)
+			: weeklyCumulativeSpend(money.transactions, money.today)
+	)
 
 	const runwayPct = $derived(
 		money.summary.dailyAllowance > 0
@@ -74,6 +84,37 @@
 		<p class="money mt-1 text-2xl font-bold" style="color:var(--color-positive)">
 			${money.summary.balance.toLocaleString()}
 		</p>
+	</div>
+
+	<!-- 累積花費 -->
+	<div class="card surface-card">
+		<div class="mb-3 flex items-center justify-between">
+			<p
+				class="inline-flex items-center gap-1.5 text-xs font-medium"
+				style="color:var(--color-ink-soft)"
+			>
+				<TrendingUp size={16} />累積花費
+			</p>
+			<SegmentedControl
+				value={chartTab}
+				onValueChange={(detail) => {
+					if (detail.value) chartTab = detail.value as 'month' | 'week'
+				}}
+			>
+				<SegmentedControl.Control>
+					<SegmentedControl.Item value="month">
+						<SegmentedControl.ItemText>月</SegmentedControl.ItemText>
+						<SegmentedControl.ItemHiddenInput />
+					</SegmentedControl.Item>
+					<SegmentedControl.Item value="week">
+						<SegmentedControl.ItemText>週</SegmentedControl.ItemText>
+						<SegmentedControl.ItemHiddenInput />
+					</SegmentedControl.Item>
+					<SegmentedControl.Indicator />
+				</SegmentedControl.Control>
+			</SegmentedControl>
+		</div>
+		<CumulativeChart points={chartPoints} />
 	</div>
 
 	<!-- 本次卡費 -->

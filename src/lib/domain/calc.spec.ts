@@ -6,6 +6,8 @@ import {
 	dailyAllowance,
 	spentToday,
 	topTransactionDetails,
+	monthlyCumulativeSpend,
+	weeklyCumulativeSpend,
 	groupTransactionsByDay,
 	formatHistoryDayLabel,
 	formatHistoryTransactionLine,
@@ -139,6 +141,53 @@ describe('topTransactionDetails', () => {
 
 	it('returns empty for no transactions', () => {
 		expect(topTransactionDetails([])).toEqual([])
+	})
+})
+
+describe('monthlyCumulativeSpend', () => {
+	it('accumulates day-by-day spend for the current month up to today', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-01', detail: 'a', amount: 100, method: 'cash' },
+			{ date: '2026-06-03', detail: 'b', amount: 50, method: 'cash' },
+			{ date: '2026-06-03', detail: 'c', amount: 20, method: 'cash' },
+			{ date: '2026-05-31', detail: 'd', amount: 999, method: 'cash' },
+			{ date: '2026-06-10', detail: 'e', amount: 999, method: 'cash' }
+		]
+		expect(monthlyCumulativeSpend(txns, '2026-06-03')).toEqual([
+			{ label: '1', cumulative: 100 },
+			{ label: '2', cumulative: 100 },
+			{ label: '3', cumulative: 170 }
+		])
+	})
+
+	it('returns 0 cumulative points with no matching transactions', () => {
+		expect(monthlyCumulativeSpend([], '2026-06-03')).toEqual([
+			{ label: '1', cumulative: 0 },
+			{ label: '2', cumulative: 0 },
+			{ label: '3', cumulative: 0 }
+		])
+	})
+})
+
+describe('weeklyCumulativeSpend', () => {
+	it('accumulates day-by-day spend from Sunday up to today', () => {
+		const txns: Transaction[] = [
+			{ date: '2026-06-21', detail: 'a', amount: 100, method: 'cash' },
+			{ date: '2026-06-23', detail: 'b', amount: 40, method: 'cash' },
+			{ date: '2026-06-24', detail: 'c', amount: 10, method: 'cash' },
+			{ date: '2026-06-20', detail: 'd', amount: 999, method: 'cash' },
+			{ date: '2026-06-27', detail: 'e', amount: 999, method: 'cash' }
+		]
+		expect(weeklyCumulativeSpend(txns, '2026-06-24')).toEqual([
+			{ label: '日', cumulative: 100 },
+			{ label: '一', cumulative: 100 },
+			{ label: '二', cumulative: 140 },
+			{ label: '三', cumulative: 150 }
+		])
+	})
+
+	it('returns a single 0 point when today is Sunday', () => {
+		expect(weeklyCumulativeSpend([], '2026-06-21')).toEqual([{ label: '日', cumulative: 0 }])
 	})
 })
 

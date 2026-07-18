@@ -6,7 +6,13 @@
 		groupTransactionsByDay,
 		serializeHistoryDayText
 	} from '$lib/domain/calc'
-	import { BANKS, PAYMENT_LABELS, PAYMENT_ICON, type PaymentMethod, type Transaction } from '$lib/domain/types'
+	import {
+		BANKS,
+		PAYMENT_LABELS,
+		PAYMENT_ICON,
+		type PaymentMethod,
+		type Transaction
+	} from '$lib/domain/types'
 	import Copy from '@lucide/svelte/icons/copy'
 	import Check from '@lucide/svelte/icons/check'
 	import X from '@lucide/svelte/icons/x'
@@ -114,19 +120,42 @@
 												class="chip inline-flex items-center gap-1 {editMethod === m
 													? 'preset-filled-primary-500'
 													: 'preset-outlined-surface-200-800'}"
-												onclick={() => (editMethod = m)}>
-												{#if PAYMENT_ICON[m] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
+												onclick={() => (editMethod = m)}
+											>
+												{#if PAYMENT_ICON[m] === 'cash'}<Banknote size={14} />{:else}<CreditCard
+														size={14}
+													/>{/if}
 												{PAYMENT_LABELS[m]}
 											</button>
 										{/each}
 									</div>
 									<div class="flex gap-2">
-										<button onclick={saveEdit} class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"><Check size={16} />儲存</button>
-										<button onclick={cancelEdit} class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"><X size={16} />取消</button>
+										<button
+											onclick={saveEdit}
+											class="btn preset-filled-primary-500 inline-flex items-center gap-1.5"
+											><Check size={16} />儲存</button
+										>
+										<button
+											onclick={cancelEdit}
+											class="btn preset-outlined-surface-200-800 inline-flex items-center gap-1.5"
+											><X size={16} />取消</button
+										>
 										{#if confirmDelete}
-											<button onclick={() => { deleteTransaction(editingId!); editingId = null; confirmDelete = false }} class="btn preset-filled-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />確定刪除</button>
+											<button
+												onclick={() => {
+													deleteTransaction(editingId!)
+													editingId = null
+													confirmDelete = false
+												}}
+												class="btn preset-filled-error-500 ml-auto inline-flex items-center gap-1.5"
+												><Trash2 size={16} />確定刪除</button
+											>
 										{:else}
-											<button onclick={() => (confirmDelete = true)} class="btn preset-outlined-error-500 ml-auto inline-flex items-center gap-1.5"><Trash2 size={16} />刪除</button>
+											<button
+												onclick={() => (confirmDelete = true)}
+												class="btn preset-outlined-error-500 ml-auto inline-flex items-center gap-1.5"
+												><Trash2 size={16} />刪除</button
+											>
 										{/if}
 									</div>
 								</div>
@@ -137,8 +166,13 @@
 								>
 									<div>
 										<p class="text-sm font-semibold">{txn.detail}</p>
-										<p class="inline-flex items-center gap-1 text-xs" style="color:var(--color-ink-soft)">
-											{#if PAYMENT_ICON[txn.method] === 'cash'}<Banknote size={14} />{:else}<CreditCard size={14} />{/if}
+										<p
+											class="inline-flex items-center gap-1 text-xs"
+											style="color:var(--color-ink-soft)"
+										>
+											{#if PAYMENT_ICON[txn.method] === 'cash'}<Banknote
+													size={14}
+												/>{:else}<CreditCard size={14} />{/if}
 											{PAYMENT_LABELS[txn.method]}
 										</p>
 									</div>

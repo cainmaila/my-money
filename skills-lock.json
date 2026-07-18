@@ -1,11 +1,11 @@
 {
-  "version": 1,
-  "skills": {
-    "dev-task-planner": {
-      "source": "cainmaila/dev-manager",
-      "sourceType": "github",
-      "skillPath": "skills/dev-task-planner/SKILL.md",
-      "computedHash": "138943e329815fe5f477c6af354eb7d83a9b3b28f19c0685221b53c8329ded65"
-    }
-  }
+	"version": 1,
+	"skills": {
+		"dev-task-planner": {
+			"source": "cainmaila/dev-manager",
+			"sourceType": "github",
+			"skillPath": "skills/dev-task-planner/SKILL.md",
+			"computedHash": "138943e329815fe5f477c6af354eb7d83a9b3b28f19c0685221b53c8329ded65"
+		}
+	}
 }
