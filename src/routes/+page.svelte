@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { getState } from '$lib/stores/money.svelte'
 	import { BANKS, PAYMENT_LABELS } from '$lib/domain/types'
-	import { monthlyCumulativeSpend, weeklyCumulativeSpend } from '$lib/domain/calc'
+	import { monthlyTotals, weeklyTotals } from '$lib/domain/calc'
 	import { Progress, SegmentedControl } from '@skeletonlabs/skeleton-svelte'
 	import Coins from '@lucide/svelte/icons/coins'
 	import Wallet from '@lucide/svelte/icons/wallet'
 	import CreditCard from '@lucide/svelte/icons/credit-card'
 	import ReceiptText from '@lucide/svelte/icons/receipt-text'
-	import TrendingUp from '@lucide/svelte/icons/trending-up'
-	import CumulativeChart from '$lib/components/CumulativeChart.svelte'
+	import BarChart3 from '@lucide/svelte/icons/bar-chart-3'
+	import PeriodBarChart from '$lib/components/PeriodBarChart.svelte'
 
 	const money = getState()
 
 	let chartTab = $state<'month' | 'week'>('month')
 	const chartPoints = $derived(
 		chartTab === 'month'
-			? monthlyCumulativeSpend(money.transactions, money.today)
-			: weeklyCumulativeSpend(money.transactions, money.today)
+			? monthlyTotals(money.transactions, money.today)
+			: weeklyTotals(money.transactions, money.today)
 	)
 
 	const runwayPct = $derived(
@@ -86,14 +86,14 @@
 		</p>
 	</div>
 
-	<!-- 累積花費 -->
+	<!-- 花費比較 -->
 	<div class="card surface-card">
 		<div class="mb-3 flex items-center justify-between">
 			<p
 				class="inline-flex items-center gap-1.5 text-xs font-medium"
 				style="color:var(--color-ink-soft)"
 			>
-				<TrendingUp size={16} />累積花費
+				<BarChart3 size={16} />花費比較
 			</p>
 			<SegmentedControl
 				value={chartTab}
@@ -114,7 +114,7 @@
 				</SegmentedControl.Control>
 			</SegmentedControl>
 		</div>
-		<CumulativeChart points={chartPoints} />
+		<PeriodBarChart points={chartPoints} />
 	</div>
 
 	<!-- 本次卡費 -->

@@ -40,9 +40,9 @@ export interface DetailSummary {
 	totalAmount: number
 }
 
-export interface CumulativePoint {
+export interface PeriodTotal {
 	label: string
-	cumulative: number
+	total: number
 }
 
 export interface Settings {

@@ -1,14 +1,12 @@
 import {
 	PAYMENT_LABELS,
 	type Bank,
-	type CumulativePoint,
 	type DetailSummary,
 	type Fund,
+	type PeriodTotal,
 	type Summary,
 	type Transaction
 } from './types'
-
-const WEEKDAY_LABELS = ['日', '一', '二', '三', '四', '五', '六']
 
 function toDateStr(d: Date): string {
 	return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
@@ -67,43 +65,44 @@ export function topTransactionDetails(txns: Transaction[], limit = 5): DetailSum
 		.slice(0, limit)
 }
 
-export function monthlyCumulativeSpend(txns: Transaction[], today: string): CumulativePoint[] {
-	const monthPrefix = today.slice(0, 7)
-	const todayDay = Number(today.slice(8, 10))
-	const dailyTotals = new Map<string, number>()
+export function monthlyTotals(txns: Transaction[], today: string, months = 6): PeriodTotal[] {
+	const [todayYear, todayMonth] = today.split('-').map(Number)
+	const totals = new Map<string, number>()
 	for (const t of txns) {
-		if (!t.date.startsWith(monthPrefix)) continue
-		dailyTotals.set(t.date, (dailyTotals.get(t.date) ?? 0) + t.amount)
+		const key = t.date.slice(0, 7)
+		totals.set(key, (totals.get(key) ?? 0) + t.amount)
 	}
 
-	const points: CumulativePoint[] = []
-	let cumulative = 0
-	for (let day = 1; day <= todayDay; day++) {
-		const dateStr = `${monthPrefix}-${String(day).padStart(2, '0')}`
-		cumulative += dailyTotals.get(dateStr) ?? 0
-		points.push({ label: String(day), cumulative })
+	const points: PeriodTotal[] = []
+	for (let i = months - 1; i >= 0; i--) {
+		const d = new Date(todayYear, todayMonth - 1 - i, 1)
+		const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+		points.push({ label: `${d.getMonth() + 1}月`, total: totals.get(key) ?? 0 })
 	}
 	return points
 }
 
-export function weeklyCumulativeSpend(txns: Transaction[], today: string): CumulativePoint[] {
+export function weeklyTotals(txns: Transaction[], today: string, weeks = 6): PeriodTotal[] {
 	const dailyTotals = new Map<string, number>()
 	for (const t of txns) {
 		dailyTotals.set(t.date, (dailyTotals.get(t.date) ?? 0) + t.amount)
 	}
 
 	const todayDate = new Date(today + 'T00:00:00')
-	const dow = todayDate.getDay()
-	const sunday = new Date(todayDate)
-	sunday.setDate(todayDate.getDate() - dow)
+	const thisSunday = new Date(todayDate)
+	thisSunday.setDate(todayDate.getDate() - todayDate.getDay())
 
-	const points: CumulativePoint[] = []
-	let cumulative = 0
-	for (let i = 0; i <= dow; i++) {
-		const d = new Date(sunday)
-		d.setDate(sunday.getDate() + i)
-		cumulative += dailyTotals.get(toDateStr(d)) ?? 0
-		points.push({ label: WEEKDAY_LABELS[i], cumulative })
+	const points: PeriodTotal[] = []
+	for (let w = weeks - 1; w >= 0; w--) {
+		const sunday = new Date(thisSunday)
+		sunday.setDate(thisSunday.getDate() - w * 7)
+		let total = 0
+		for (let i = 0; i < 7; i++) {
+			const d = new Date(sunday)
+			d.setDate(sunday.getDate() + i)
+			total += dailyTotals.get(toDateStr(d)) ?? 0
+		}
+		points.push({ label: `${sunday.getMonth() + 1}/${sunday.getDate()}`, total })
 	}
 	return points
 }

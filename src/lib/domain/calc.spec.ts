@@ -6,8 +6,8 @@ import {
 	dailyAllowance,
 	spentToday,
 	topTransactionDetails,
-	monthlyCumulativeSpend,
-	weeklyCumulativeSpend,
+	monthlyTotals,
+	weeklyTotals,
 	groupTransactionsByDay,
 	formatHistoryDayLabel,
 	formatHistoryTransactionLine,
@@ -144,50 +144,62 @@ describe('topTransactionDetails', () => {
 	})
 })
 
-describe('monthlyCumulativeSpend', () => {
-	it('accumulates day-by-day spend for the current month up to today', () => {
+describe('monthlyTotals', () => {
+	it('sums spend per month over the requested window, oldest to newest', () => {
 		const txns: Transaction[] = [
-			{ date: '2026-06-01', detail: 'a', amount: 100, method: 'cash' },
-			{ date: '2026-06-03', detail: 'b', amount: 50, method: 'cash' },
-			{ date: '2026-06-03', detail: 'c', amount: 20, method: 'cash' },
-			{ date: '2026-05-31', detail: 'd', amount: 999, method: 'cash' },
-			{ date: '2026-06-10', detail: 'e', amount: 999, method: 'cash' }
+			{ date: '2026-04-15', detail: 'a', amount: 100, method: 'cash' },
+			{ date: '2026-05-01', detail: 'b', amount: 50, method: 'cash' },
+			{ date: '2026-05-20', detail: 'c', amount: 25, method: 'cash' },
+			{ date: '2026-06-01', detail: 'd', amount: 200, method: 'cash' },
+			{ date: '2026-06-24', detail: 'e', amount: 10, method: 'cash' },
+			{ date: '2026-03-01', detail: 'f', amount: 999, method: 'cash' }
 		]
-		expect(monthlyCumulativeSpend(txns, '2026-06-03')).toEqual([
-			{ label: '1', cumulative: 100 },
-			{ label: '2', cumulative: 100 },
-			{ label: '3', cumulative: 170 }
+		expect(monthlyTotals(txns, '2026-06-24', 3)).toEqual([
+			{ label: '4月', total: 100 },
+			{ label: '5月', total: 75 },
+			{ label: '6月', total: 210 }
 		])
 	})
 
-	it('returns 0 cumulative points with no matching transactions', () => {
-		expect(monthlyCumulativeSpend([], '2026-06-03')).toEqual([
-			{ label: '1', cumulative: 0 },
-			{ label: '2', cumulative: 0 },
-			{ label: '3', cumulative: 0 }
+	it('returns 0 totals for months with no transactions', () => {
+		expect(monthlyTotals([], '2026-06-24', 3)).toEqual([
+			{ label: '4月', total: 0 },
+			{ label: '5月', total: 0 },
+			{ label: '6月', total: 0 }
+		])
+	})
+
+	it('wraps across a year boundary', () => {
+		const txns: Transaction[] = [{ date: '2025-11-10', detail: 'a', amount: 100, method: 'cash' }]
+		expect(monthlyTotals(txns, '2026-01-15', 3)).toEqual([
+			{ label: '11月', total: 100 },
+			{ label: '12月', total: 0 },
+			{ label: '1月', total: 0 }
 		])
 	})
 })
 
-describe('weeklyCumulativeSpend', () => {
-	it('accumulates day-by-day spend from Sunday up to today', () => {
+describe('weeklyTotals', () => {
+	it('sums spend per week (Sun-Sat) over the requested window, oldest to newest', () => {
 		const txns: Transaction[] = [
-			{ date: '2026-06-21', detail: 'a', amount: 100, method: 'cash' },
-			{ date: '2026-06-23', detail: 'b', amount: 40, method: 'cash' },
-			{ date: '2026-06-24', detail: 'c', amount: 10, method: 'cash' },
-			{ date: '2026-06-20', detail: 'd', amount: 999, method: 'cash' },
-			{ date: '2026-06-27', detail: 'e', amount: 999, method: 'cash' }
+			{ date: '2026-06-08', detail: 'a', amount: 100, method: 'cash' },
+			{ date: '2026-06-15', detail: 'b', amount: 50, method: 'cash' },
+			{ date: '2026-06-21', detail: 'c', amount: 30, method: 'cash' },
+			{ date: '2026-06-26', detail: 'd', amount: 20, method: 'cash' },
+			{ date: '2026-06-06', detail: 'e', amount: 999, method: 'cash' }
 		]
-		expect(weeklyCumulativeSpend(txns, '2026-06-24')).toEqual([
-			{ label: '日', cumulative: 100 },
-			{ label: '一', cumulative: 100 },
-			{ label: '二', cumulative: 140 },
-			{ label: '三', cumulative: 150 }
+		expect(weeklyTotals(txns, '2026-06-24', 3)).toEqual([
+			{ label: '6/7', total: 100 },
+			{ label: '6/14', total: 50 },
+			{ label: '6/21', total: 50 }
 		])
 	})
 
-	it('returns a single 0 point when today is Sunday', () => {
-		expect(weeklyCumulativeSpend([], '2026-06-21')).toEqual([{ label: '日', cumulative: 0 }])
+	it('returns 0 totals for weeks with no transactions', () => {
+		expect(weeklyTotals([], '2026-06-21', 2)).toEqual([
+			{ label: '6/14', total: 0 },
+			{ label: '6/21', total: 0 }
+		])
 	})
 })
 
